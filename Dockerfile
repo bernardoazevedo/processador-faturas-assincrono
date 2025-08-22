@@ -8,4 +8,3 @@ RUN go install github.com/air-verse/air@latest
 # RUN go build -o /app/server
 
 ENTRYPOINT ["air"]
-# ENTRYPOINT ["./server"]
