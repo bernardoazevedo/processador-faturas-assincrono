@@ -1114,5 +1114,89 @@
         "cnpj": "74.821.058/0001-32",
         "valorTotal": 129.9,
         "descricao": "Desenvolvimento de API"
+    },
+    {
+        "id": "FAT-20250821-101",
+        "cnpj": "69.375.897/0001-34",
+        "valorTotal": 10,
+        "descricao": "Desenvolvimento de API"
+    },
+    {
+        "id": "FAT-20250821-102",
+        "cnpj": "71.231.419/0001-00",
+        "valorTotal": 789.9,
+        "descricao": "Assinatura de Cloud Services"
+    },
+    {
+        "id": "FAT-20250821-103",
+        "cnpj": "97.443.746/0001-01",
+        "valorTotal": 2500,
+        "descricao": "Suporte Técnico Premium"
+    },
+    {
+        "id": "FAT-20250821-104",
+        "cnpj": "19.921.031/0001-03",
+        "valorTotal": 150.75,
+        "descricao": "Manutenção de Servidor"
+    },
+    {
+        "id": "FAT-20250821-105",
+        "cnpj": "66.662.525/0001-09",
+        "valorTotal": 3200,
+        "descricao": "Licença de Software Anual"
+    },
+    {
+        "id": "FAT-20250821-106",
+        "cnpj": "77.198.283/0001-52",
+        "valorTotal": 999.99,
+        "descricao": "Serviços de Consultoria de TI"
+    },
+    {
+        "id": "FAT-20250821-107",
+        "cnpj": "32.180.829/0001-00",
+        "valorTotal": 450,
+        "descricao": "Desenvolvimento de API"
+    },
+    {
+        "id": "FAT-20250821-108",
+        "cnpj": "98.728.325/0001-90",
+        "valorTotal": 1800.5,
+        "descricao": "Assinatura de Cloud Services"
+    },
+        {
+        "id": "FAT-20250821-122",
+        "cnpj": "10.840.739/0001-65",
+        "valorTotal": 4321.98,
+        "descricao": "Manutenção de Servidor"
+    },
+    {
+        "id": "FAT-20250821-123",
+        "cnpj": "51.427.892/0001-42",
+        "valorTotal": 188,
+        "descricao": "Licença de Software Anual"
+    },
+    {
+        "id": "FAT-20250821-124",
+        "cnpj": "84.382.025/0001-97",
+        "valorTotal": 777,
+        "descricao": "Serviços de Consultoria de TI"
+    },
+    {
+        "id": "FAT-20250821-125",
+        "cnpj": "91.284.283/0001-04",
+        "valorTotal": 299.9,
+        "descricao": "Desenvolvimento de API"
+    },
+        {
+        "id": "FAT-20250821-116",
+        "cnpj": "22.383.040/0001-00",
+        "valorTotal": 75,
+        "descricao": "Manutenção de Servidor"
+    },
+    {
+        "id": "FAT-20250821-117",
+        "cnpj": "71.172.957/0001-63",
+        "valorTotal": 310.5,
+        "descricao": "Licença de Software Anual"
     }
 ]

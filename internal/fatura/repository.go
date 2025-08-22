@@ -66,7 +66,7 @@ func validaCnpj(cnpj string) bool {
 func ListaFaturas() ([]Fatura, error) {
 	DB := database.GetDB()
 
-	collection := DB.Database("testing").Collection("faturas")
+	collection := DB.Database("faturasAPI").Collection("faturas")
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
