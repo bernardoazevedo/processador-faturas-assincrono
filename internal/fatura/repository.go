@@ -89,7 +89,10 @@ func ListaFaturas() ([]Fatura, error) {
 }
 
 func AdicionaNotificacao(fatura Fatura) error {
-	amqpConn := message.GetConn()
+	amqpConn, err := message.GetConn()
+	if err != nil {
+		return err
+	}
 
 	channel, err := amqpConn.Channel()
 	if err != nil {

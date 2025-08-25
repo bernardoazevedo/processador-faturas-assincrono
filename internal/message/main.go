@@ -28,6 +28,9 @@ func Start() (error) {
 	return nil
 }
 
-func GetConn() (*amqp.Connection) {
-	return AMQPconn
+func GetConn() (*amqp.Connection, error) {
+	if AMQPconn.IsClosed() {
+		return Connect()
+	}
+	return AMQPconn, nil
 }
