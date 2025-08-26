@@ -13,12 +13,10 @@ import (
 	"github.com/bernardoazevedo/faturas/internal/message"
 	"github.com/gin-gonic/gin"
 	"github.com/paemuri/brdoc"
-	amqp "github.com/rabbitmq/amqp091-go"
 	"go.mongodb.org/mongo-driver/v2/bson"
 )
 
 func ProcessaFaturas(faturas []Fatura) error {
-	DB := database.GetDB()
 
 	for _, fatura := range faturas {
 		err := validaFatura(fatura)
@@ -26,18 +24,37 @@ func ProcessaFaturas(faturas []Fatura) error {
 			return err
 		}
 
-		collection  := DB.Database("faturasAPI").Collection("faturas")
-		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-		defer cancel()
-		_, err = collection.InsertOne(ctx, fatura)
+		err = salvaFatura(fatura)
 		if err != nil {
-			return errors.New("error inserting item: " + fatura.Id)
+			return err
 		}
 
-		err = AdicionaNotificacao(fatura)
+		messageBody, err := json.Marshal(gin.H{
+			"cnpj":      fatura.Cnpj,
+			"descricao": fmt.Sprintf("Foi emitida uma nota fiscal no valor de R$%s com descrição: '%s' no CNPJ: %s", strconv.FormatFloat(fatura.ValorTotal, 'f', -1, 64), fatura.Descricao, fatura.Cnpj),
+		})
+		if err != nil {
+			return err
+		}
+
+		err = message.AdicionaNotificacao("notifications", messageBody)
 		if err != nil {
 			return errors.New("error creating notification at item: " + fatura.Id)
 		}
+	}
+
+	return nil
+}
+
+func salvaFatura(fatura Fatura) (error) {
+	DB := database.GetDB()
+	
+	collection  := DB.Database("faturasAPI").Collection("faturas")
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+	_, err := collection.InsertOne(ctx, fatura)
+	if err != nil {
+		return errors.New("error inserting item: " + fatura.Id)
 	}
 
 	return nil
@@ -66,7 +83,7 @@ func validaCnpj(cnpj string) bool {
 func ListaFaturas() ([]Fatura, error) {
 	DB := database.GetDB()
 
-	collection := DB.Database("faturasAPI").Collection("faturas")
+	collection  := DB.Database("faturasAPI").Collection("faturas")
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
@@ -86,40 +103,4 @@ func ListaFaturas() ([]Fatura, error) {
 	}
 
 	return faturas, nil
-}
-
-func AdicionaNotificacao(fatura Fatura) error {
-	amqpConn, err := message.GetConn()
-	if err != nil {
-		return err
-	}
-
-	channel, err := amqpConn.Channel()
-	if err != nil {
-		return err
-	}
-	defer channel.Close()
-
-	queue, err := channel.QueueDeclare("notification", false, false, false, false, nil)
-	if err != nil {
-		return err
-	}
-
-	messageBody, err := json.Marshal(gin.H{
-		"cnpj":      fatura.Cnpj,
-		"descricao": fmt.Sprintf("Foi emitida uma nota fiscal no valor de R$%s com descrição: '%s' no CNPJ: %s", strconv.FormatFloat(fatura.ValorTotal, 'f', -1, 64), fatura.Descricao, fatura.Cnpj),
-	})
-	if err != nil {
-		return err
-	}
-
-	err = channel.Publish("", queue.Name, false, false, amqp.Publishing{
-		ContentType: "application/json",
-		Body:        messageBody,
-	})
-	if err != nil {
-		return err
-	}
-
-	return nil
 }
