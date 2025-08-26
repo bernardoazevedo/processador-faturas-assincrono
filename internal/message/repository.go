@@ -39,7 +39,7 @@ func AdicionaNotificacao(queueName string, messageBody []byte) error {
 	return nil
 }
 
-func RetornaNotificacoes(queueName string) (<-chan amqp.Delivery, error) {
+func RetornaDelivery(queueName string) (<-chan amqp.Delivery, error) {
 	amqpConn, err := GetConn()
 	if err != nil {
 		return nil, err
@@ -80,7 +80,7 @@ func EnviaNotificacoes() error {
 	sigchan := make(chan os.Signal, 1)
 	signal.Notify(sigchan, syscall.SIGINT, syscall.SIGTERM)
 
-	amqpMessages, err := RetornaNotificacoes("notifications")
+	amqpMessages, err := RetornaDelivery("notifications")
 	if err != nil {
 		return err
 	}
