@@ -11,6 +11,7 @@ import (
 
 	"github.com/bernardoazevedo/faturas/internal/database"
 	"github.com/bernardoazevedo/faturas/internal/message"
+	"github.com/bernardoazevedo/faturas/internal/utils"
 	"github.com/gin-gonic/gin"
 	"github.com/paemuri/brdoc"
 	"go.mongodb.org/mongo-driver/v2/bson"
@@ -33,6 +34,11 @@ func ProcessaFaturas(faturas []Fatura) error {
 			"cnpj":      fatura.Cnpj,
 			"descricao": fmt.Sprintf("Foi emitida uma nota fiscal no valor de R$%s com descrição: '%s' no CNPJ: %s", strconv.FormatFloat(fatura.ValorTotal, 'f', -1, 64), fatura.Descricao, fatura.Cnpj),
 		})
+		if err != nil {
+			return err
+		}
+
+		err = emiteNotaFiscal(fatura)
 		if err != nil {
 			return err
 		}
@@ -103,4 +109,14 @@ func ListaFaturas() ([]Fatura, error) {
 	}
 
 	return faturas, nil
+}
+
+// Simulando chamada para API externa
+func emiteNotaFiscal(fatura Fatura) error {
+	time.Sleep(time.Second)
+	_, err := utils.WriteLog("Nota fiscal emitida para: " + fatura.Id)
+	if err != nil {
+		return err
+	}
+	return nil
 }
