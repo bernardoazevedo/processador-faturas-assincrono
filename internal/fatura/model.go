@@ -1,13 +1,5 @@
 package fatura
 
-// type Fatura struct {
-// 	Id 		string 			`json:"id"`
-// 	Item 	item.Item 		
-// 	Pessoa	pessoa.Pessoa	
-// 	Valor	int 			`json:"valor"`
-// 	// Data	time.Time		`json:"data"`
-// }
-
 type Fatura struct {
 	Id 			string 	`json:"id" bson:"id"`
 	Cnpj		string 	`json:"cnpj" bson:"cnpj"`
