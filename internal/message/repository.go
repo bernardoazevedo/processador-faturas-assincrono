@@ -72,7 +72,7 @@ func EnviaNotificacoes() error {
 
 	go func() {
 		for message := range amqpMessages {
-			bytes, err := utils.WriteLog(fmt.Sprintf("send: %v\n", string(message.Body)))
+			bytes, err := utils.WriteLog(fmt.Sprintf("send: %v", string(message.Body)))
 			if err != nil {
 				log.Println("error: " + err.Error())
 			} else {

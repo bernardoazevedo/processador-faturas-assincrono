@@ -31,7 +31,7 @@ func WriteLog(message string) (int, error) {
 	}
 	defer file.Close()
 
-	byteMessage := []byte(message)
+	byteMessage := []byte(message + "\n")
 	bytes, err := file.Write(byteMessage)
 	if err != nil {
 		return bytes, err
