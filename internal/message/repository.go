@@ -11,7 +11,7 @@ import (
 	amqp "github.com/rabbitmq/amqp091-go"
 )
 
-func AdicionaNotificacao(queueName string, messageBody []byte) error {
+func Add(queueName string, messageBody []byte) error {
 	amqpConn, err := GetConn()
 	if err != nil {
 		return err
@@ -39,7 +39,7 @@ func AdicionaNotificacao(queueName string, messageBody []byte) error {
 	return nil
 }
 
-func RetornaDelivery(queueName string) (<-chan amqp.Delivery, error) {
+func GetDelivery(queueName string) (<-chan amqp.Delivery, error) {
 	amqpConn, err := GetConn()
 	if err != nil {
 		return nil, err
@@ -58,25 +58,23 @@ func RetornaDelivery(queueName string) (<-chan amqp.Delivery, error) {
 	return channel.Consume(queue.Name, "", true, false, false, false, nil)
 }
 
-func EnviaNotificacoes() error {
+func NotificationsWorker() error {
 	horaAtual := utils.RetornaHoraMinutoSegundo()
-	utils.WriteLog("\n->started listening for messages: " + horaAtual + "\n")
+	utils.WriteLog("\t\t\t->started listening for messages: " + horaAtual)
 
 	sigchan := make(chan os.Signal, 1)
 	signal.Notify(sigchan, syscall.SIGINT, syscall.SIGTERM)
 
-	amqpMessages, err := RetornaDelivery("notifications")
+	amqpMessages, err := GetDelivery("notifications")
 	if err != nil {
 		return err
 	}
 
 	go func() {
 		for message := range amqpMessages {
-			bytes, err := utils.WriteLog(fmt.Sprintf("send: %v", string(message.Body)))
+			_, err := utils.WriteLog(fmt.Sprintf("send: %v", string(message.Body)))
 			if err != nil {
 				log.Println("error: " + err.Error())
-			} else {
-				log.Printf("write: %v", bytes)
 			}
 		}
 	}()

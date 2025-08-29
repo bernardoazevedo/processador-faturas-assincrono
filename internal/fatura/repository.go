@@ -5,8 +5,12 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"log"
+	"os"
+	"os/signal"
 	"strconv"
 	"strings"
+	"syscall"
 	"time"
 
 	"github.com/bernardoazevedo/faturas/internal/database"
@@ -20,14 +24,25 @@ import (
 func ProcessaFaturas(faturas []Fatura) error {
 
 	for _, fatura := range faturas {
-		err := validaFatura(fatura)
+		faturaJson, err := json.Marshal(fatura)
 		if err != nil {
 			return err
 		}
 
-		err = salvaFatura(fatura)
+		err = validaFatura(fatura)
 		if err != nil {
 			return err
+		}
+
+		err = message.Add("save", faturaJson)
+		if err != nil {
+			return errors.New("error adding message to save queue, at item: " + fatura.Id)
+		}
+
+		
+		err = message.Add("generateNote", faturaJson)
+		if err != nil {
+			return errors.New("error adding message to generate queue, at item: " + fatura.Id)
 		}
 
 		messageBody, err := json.Marshal(gin.H{
@@ -38,12 +53,7 @@ func ProcessaFaturas(faturas []Fatura) error {
 			return err
 		}
 
-		err = emiteNotaFiscal(fatura)
-		if err != nil {
-			return err
-		}
-
-		err = message.AdicionaNotificacao("notifications", messageBody)
+		err = message.Add("notifications", messageBody)
 		if err != nil {
 			return errors.New("error creating notification at item: " + fatura.Id)
 		}
@@ -119,4 +129,76 @@ func emiteNotaFiscal(fatura Fatura) error {
 		return err
 	}
 	return nil
+}
+
+func SaveWorker() error {
+	horaAtual := utils.RetornaHoraMinutoSegundo()
+	utils.WriteLog("\t\t\t->started listening for save requests: " + horaAtual)
+
+	sigchan := make(chan os.Signal, 1)
+	signal.Notify(sigchan, syscall.SIGINT, syscall.SIGTERM)
+
+	amqpMessages, err := message.GetDelivery("save")
+	if err != nil {
+		return err
+	}
+
+	go func() {
+		for message := range amqpMessages {
+			var fatura Fatura
+
+			err := json.Unmarshal(message.Body, &fatura)
+			if err != nil {
+				log.Println("error: " + err.Error())
+			}
+
+			err = salvaFatura(fatura)
+			if err != nil {
+				log.Println("error: " + err.Error())
+			}
+		}
+	}()
+
+	log.Println("[*] Monitoring save requests. Press CTRL+C to exit")
+	<-sigchan
+
+	log.Println("Killed, shutting down")
+
+	return nil
+}
+
+func GenerateNoteWorker() error {
+	horaAtual := utils.RetornaHoraMinutoSegundo()
+	utils.WriteLog("\t\t\t->started listening for note request: " + horaAtual)
+
+	sigchan := make(chan os.Signal, 1)
+	signal.Notify(sigchan, syscall.SIGINT, syscall.SIGTERM)
+
+	amqpMessages, err := message.GetDelivery("generateNote")
+	if err != nil {
+		return err
+	}
+
+	go func() {
+		for message := range amqpMessages {
+			var fatura Fatura
+
+			err := json.Unmarshal(message.Body, &fatura)
+			if err != nil {
+				log.Println("error: " + err.Error())
+			}
+
+			err = emiteNotaFiscal(fatura)
+			if err != nil {
+				log.Println("error: " + err.Error())
+			}
+		}
+	}()
+
+	log.Println("[*] Monitoring note requests. Press CTRL+C to exit")
+	<-sigchan
+
+	log.Println("Killed, shutting down")
+
+	return nil	
 }

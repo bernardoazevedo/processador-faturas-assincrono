@@ -29,7 +29,9 @@ func main() {
 		log.Fatal("Error connecting to rabbitmq")
 	}
 
-	go message.EnviaNotificacoes()
+	go message.NotificationsWorker()
+	go fatura.SaveWorker()
+	go fatura.GenerateNoteWorker()
 
 	router := gin.Default()
 	loadRoutes(router)
