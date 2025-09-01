@@ -40,6 +40,6 @@ func main() {
 
 func loadRoutes(router *gin.Engine) {
 
-	router.POST("/faturas", fatura.HttpProcessaFaturas)
-	router.GET("/faturas", fatura.HttpListaFaturas)
+	router.POST("/faturas", fatura.HttpProcessList)
+	router.GET("/faturas", fatura.HttpList)
 }

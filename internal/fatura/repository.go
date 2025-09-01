@@ -14,14 +14,15 @@ import (
 	"time"
 
 	"github.com/bernardoazevedo/faturas/internal/database"
+	"github.com/bernardoazevedo/faturas/internal/dates"
+	"github.com/bernardoazevedo/faturas/internal/logger"
 	"github.com/bernardoazevedo/faturas/internal/message"
-	"github.com/bernardoazevedo/faturas/internal/utils"
 	"github.com/gin-gonic/gin"
 	"github.com/paemuri/brdoc"
 	"go.mongodb.org/mongo-driver/v2/bson"
 )
 
-func ProcessaFaturas(faturas []Fatura) error {
+func ProcessList(faturas []Fatura) error {
 
 	for _, fatura := range faturas {
 		faturaJson, err := json.Marshal(fatura)
@@ -29,7 +30,7 @@ func ProcessaFaturas(faturas []Fatura) error {
 			return err
 		}
 
-		err = validaFatura(fatura)
+		err = validate(fatura)
 		if err != nil {
 			return err
 		}
@@ -76,7 +77,7 @@ func salvaFatura(fatura Fatura) (error) {
 	return nil
 }
 
-func validaFatura(fatura Fatura) error {
+func validate(fatura Fatura) error {
 	if fatura.ValorTotal <= 0 {
 		return errors.New("the total value must be above 0, at item: " + fatura.Id)
 	}
@@ -85,18 +86,18 @@ func validaFatura(fatura Fatura) error {
 		return errors.New("the description can't be empty, at item: " + fatura.Id)
 	}
 
-	if !validaCnpj(fatura.Cnpj) {
+	if !validateCnpj(fatura.Cnpj) {
 		return errors.New("the cnpj is invalid, at item: " + fatura.Id)
 	}
 
 	return nil
 }
 
-func validaCnpj(cnpj string) bool {
+func validateCnpj(cnpj string) bool {
 	return brdoc.IsCNPJ(cnpj)
 }
 
-func ListaFaturas() ([]Fatura, error) {
+func List() ([]Fatura, error) {
 	DB := database.GetDB()
 
 	collection  := DB.Database("faturasAPI").Collection("faturas")
@@ -124,7 +125,7 @@ func ListaFaturas() ([]Fatura, error) {
 // Simulando chamada para API externa
 func emiteNotaFiscal(fatura Fatura) error {
 	time.Sleep(time.Second)
-	_, err := utils.WriteLog("Nota fiscal emitida para: " + fatura.Id)
+	_, err := logger.Add("Nota fiscal emitida para: " + fatura.Id)
 	if err != nil {
 		return err
 	}
@@ -132,8 +133,8 @@ func emiteNotaFiscal(fatura Fatura) error {
 }
 
 func SaveWorker() error {
-	horaAtual := utils.RetornaHoraMinutoSegundo()
-	utils.WriteLog("\t\t\t->started listening for save requests: " + horaAtual)
+	horaAtual := dates.ActualDateHMS()
+	logger.Add("\t\t\t->started listening for save requests: " + horaAtual)
 
 	sigchan := make(chan os.Signal, 1)
 	signal.Notify(sigchan, syscall.SIGINT, syscall.SIGTERM)
@@ -168,8 +169,8 @@ func SaveWorker() error {
 }
 
 func GenerateNoteWorker() error {
-	horaAtual := utils.RetornaHoraMinutoSegundo()
-	utils.WriteLog("\t\t\t->started listening for note request: " + horaAtual)
+	horaAtual := dates.ActualDateHMS()
+	logger.Add("\t\t\t->started listening for note request: " + horaAtual)
 
 	sigchan := make(chan os.Signal, 1)
 	signal.Notify(sigchan, syscall.SIGINT, syscall.SIGTERM)

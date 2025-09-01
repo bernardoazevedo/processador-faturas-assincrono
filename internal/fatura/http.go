@@ -5,7 +5,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func HttpProcessaFaturas(c *gin.Context) {
+func HttpProcessList(c *gin.Context) {
 	var faturas []Fatura
 
 	err := c.BindJSON(&faturas)
@@ -14,7 +14,7 @@ func HttpProcessaFaturas(c *gin.Context) {
 		return
 	}
 
-	err = ProcessaFaturas(faturas)
+	err = ProcessList(faturas)
 	if err != nil {
 		c.IndentedJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return 
@@ -23,8 +23,8 @@ func HttpProcessaFaturas(c *gin.Context) {
 	c.IndentedJSON(http.StatusOK, gin.H{"faturas": faturas})
 }
 
-func HttpListaFaturas(c *gin.Context) {
-	faturas, err := ListaFaturas()
+func HttpList(c *gin.Context) {
+	faturas, err := List()
 	if err != nil {
 		c.IndentedJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return

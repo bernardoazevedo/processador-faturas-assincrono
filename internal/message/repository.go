@@ -7,7 +7,8 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/bernardoazevedo/faturas/internal/utils"
+	"github.com/bernardoazevedo/faturas/internal/dates"
+	"github.com/bernardoazevedo/faturas/internal/logger"
 	amqp "github.com/rabbitmq/amqp091-go"
 )
 
@@ -59,8 +60,8 @@ func GetDelivery(queueName string) (<-chan amqp.Delivery, error) {
 }
 
 func NotificationsWorker() error {
-	horaAtual := utils.RetornaHoraMinutoSegundo()
-	utils.WriteLog("\t\t\t->started listening for messages: " + horaAtual)
+	horaAtual := dates.ActualDateHMS()
+	logger.Add("\t\t\t->started listening for messages: " + horaAtual)
 
 	sigchan := make(chan os.Signal, 1)
 	signal.Notify(sigchan, syscall.SIGINT, syscall.SIGTERM)
@@ -72,7 +73,7 @@ func NotificationsWorker() error {
 
 	go func() {
 		for message := range amqpMessages {
-			_, err := utils.WriteLog(fmt.Sprintf("send: %v", string(message.Body)))
+			_, err := logger.Add(fmt.Sprintf("send: %v", string(message.Body)))
 			if err != nil {
 				log.Println("error: " + err.Error())
 			}
