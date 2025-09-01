@@ -3,15 +3,9 @@ package logger
 import (
 	"errors"
 	"os"
-	"time"
 
 	"github.com/bernardoazevedo/faturas/internal/dates"
 )
-
-type Log struct {
-	date    time.Time
-	message string
-}
 
 func getFile(fileName string) (*os.File, error) {
 	file, err := os.OpenFile(fileName, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)

@@ -63,7 +63,7 @@ func ProcessList(faturas []Fatura) error {
 	return nil
 }
 
-func salvaFatura(fatura Fatura) (error) {
+func save(fatura Fatura) (error) {
 	DB := database.GetDB()
 	
 	collection  := DB.Database("faturasAPI").Collection("faturas")
@@ -123,7 +123,7 @@ func List() ([]Fatura, error) {
 }
 
 // Simulando chamada para API externa
-func emiteNotaFiscal(fatura Fatura) error {
+func generateNote(fatura Fatura) error {
 	time.Sleep(time.Second)
 	_, err := logger.Add("Nota fiscal emitida para: " + fatura.Id)
 	if err != nil {
@@ -153,7 +153,7 @@ func SaveWorker() error {
 				log.Println("error: " + err.Error())
 			}
 
-			err = salvaFatura(fatura)
+			err = save(fatura)
 			if err != nil {
 				log.Println("error: " + err.Error())
 			}
@@ -189,7 +189,7 @@ func GenerateNoteWorker() error {
 				log.Println("error: " + err.Error())
 			}
 
-			err = emiteNotaFiscal(fatura)
+			err = generateNote(fatura)
 			if err != nil {
 				log.Println("error: " + err.Error())
 			}
