@@ -29,9 +29,10 @@ func main() {
 		log.Fatal("Error connecting to rabbitmq")
 	}
 
-	go message.NotificationsWorker()
+	go fatura.SaveWorker()
 	go fatura.SaveWorker()
 	go fatura.GenerateNoteWorker()
+	go fatura.NotificationsWorker()
 
 	router := gin.Default()
 	loadRoutes(router)
@@ -39,7 +40,6 @@ func main() {
 }
 
 func loadRoutes(router *gin.Engine) {
-
 	router.POST("/faturas", fatura.HttpProcessList)
 	router.GET("/faturas", fatura.HttpList)
 }

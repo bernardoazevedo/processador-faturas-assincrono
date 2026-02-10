@@ -2,6 +2,7 @@ package fatura
 
 import (
 	"net/http"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -14,10 +15,10 @@ func HttpProcessList(c *gin.Context) {
 		return
 	}
 
-	err = ProcessList(faturas)
+	err = QueueList(faturas)
 	if err != nil {
 		c.IndentedJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return 
+		return
 	}
 
 	c.IndentedJSON(http.StatusOK, gin.H{"faturas": faturas})

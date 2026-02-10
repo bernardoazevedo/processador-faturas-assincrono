@@ -2,6 +2,7 @@ package message
 
 import (
 	"os"
+
 	amqp "github.com/rabbitmq/amqp091-go"
 )
 
@@ -11,7 +12,7 @@ func Connect() (*amqp.Connection, error) {
 	user := os.Getenv("RABBIT_USER")
 	pass := os.Getenv("RABBIT_PASS")
 
-	conn, err := amqp.Dial("amqp://"+user+":"+pass+"@rabbitmq:5672/")
+	conn, err := amqp.Dial("amqp://" + user + ":" + pass + "@rabbitmq:5672/")
 	if err != nil {
 		return nil, err
 	}
@@ -20,7 +21,7 @@ func Connect() (*amqp.Connection, error) {
 	return AMQPconn, nil
 }
 
-func Start() (error) {
+func Start() error {
 	_, err := Connect()
 	if err != nil {
 		return err

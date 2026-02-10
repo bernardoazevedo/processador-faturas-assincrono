@@ -33,4 +33,3 @@ func Add(message string) (int, error) {
 
 	return bytes, nil
 }
-

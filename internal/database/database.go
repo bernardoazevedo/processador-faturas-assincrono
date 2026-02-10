@@ -15,12 +15,12 @@ func Connect() (*mongo.Client, error) {
 	user := os.Getenv("DB_USER")
 	pass := os.Getenv("DB_PASS")
 
-	client, err := mongo.Connect(options.Client().ApplyURI("mongodb://"+user+":"+pass+"@mongodb:27017"))
+	client, err := mongo.Connect(options.Client().ApplyURI("mongodb://" + user + ":" + pass + "@mongodb:27017"))
 	if err != nil {
 		panic(err)
 	}
 
-	err = client.Ping(context.Background(), readpref.Primary()) 
+	err = client.Ping(context.Background(), readpref.Primary())
 	if err != nil {
 		panic(err)
 	}
@@ -29,7 +29,7 @@ func Connect() (*mongo.Client, error) {
 	return client, nil
 }
 
-func Start() (error) {
+func Start() error {
 	_, err := Connect()
 	if err != nil {
 		return err
@@ -37,6 +37,6 @@ func Start() (error) {
 	return nil
 }
 
-func GetDB() (*mongo.Client) {
+func GetDB() *mongo.Client {
 	return DB
 }
