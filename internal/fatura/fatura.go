@@ -34,6 +34,10 @@ func QueueList(faturas []Fatura) error {
 }
 
 func validate(fatura Fatura) error {
+	if strings.TrimSpace(fatura.Id) == "" {
+		return errors.New("the id cannot be empty")
+	}
+
 	if fatura.ValorTotal <= 0 {
 		return errors.New("the total value must be above 0, at item: " + fatura.Id)
 	}
