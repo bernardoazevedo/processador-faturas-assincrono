@@ -1,6 +1,13 @@
 # Processador de Faturas Assíncrono
 
-API que simula o processamento de faturas com workers orientados a mensagens via RabbitMQ.
+API desenvolvida utilizando Go, MongoDB e RabbitMQ que simula o processamento de faturas de forma assíncrona com workers orientados a mensagens.
+
+## Tecnologias
+
+- **Go 1.24.5** -- linguagem principal
+- **Gin** -- framework HTTP
+- **MongoDB 6.0** -- banco de dados (colecao `faturas`)
+- **RabbitMQ** -- message broker (filas: `save`, `generateNote`, `notifications`)
 
 ## Requisitos
 
