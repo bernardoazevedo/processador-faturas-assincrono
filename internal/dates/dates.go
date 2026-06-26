@@ -6,7 +6,7 @@ import (
 )
 
 func FormatDateYMD(data time.Time) string {
-	return fmt.Sprintf("%d-%d-%d", data.Year(), data.Month(), data.Day())
+	return fmt.Sprintf("%04d-%02d-%02d", data.Year(), data.Month(), data.Day())
 }
 
 func ActualDateYMD() string {
