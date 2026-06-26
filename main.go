@@ -10,6 +10,14 @@ import (
 	"github.com/joho/godotenv"
 )
 
+func startWorker(name string, fn func() error) {
+	go func() {
+		if err := fn(); err != nil {
+			log.Fatalf("Error starting %s worker: %s", name, err)
+		}
+	}()
+}
+
 func main() {
 	log.SetPrefix("main: ")
 	log.SetFlags(0)
@@ -29,9 +37,9 @@ func main() {
 		log.Fatal("Error connecting to rabbitmq")
 	}
 
-	go fatura.SaveWorker()
-	go fatura.GenerateNoteWorker()
-	go fatura.NotificationsWorker()
+	startWorker("save", fatura.SaveWorker)
+	startWorker("generateNote", fatura.GenerateNoteWorker)
+	startWorker("notifications", fatura.NotificationsWorker)
 
 	router := gin.Default()
 	loadRoutes(router)
