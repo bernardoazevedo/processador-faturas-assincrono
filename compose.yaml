@@ -3,8 +3,6 @@ services:
     build: .
     ports:
     - "1234:1234"
-    volumes:
-    - ./:/app
     depends_on:
     - mongodb
     - rabbitmq
@@ -18,7 +16,7 @@ services:
       - MONGO_INITDB_ROOT_PASSWORD=${DB_PASS}
 
   mongo-express:
-    image: mongo-express
+    image: mongo-express:1-20-alpine3.19
     ports:
       - 8081:8081
     depends_on:
@@ -30,7 +28,7 @@ services:
       ME_CONFIG_BASICAUTH_PASSWORD: ${DB_PASS}
 
   rabbitmq:
-    image: rabbitmq:latest
+    image: rabbitmq:4.3.2-management-alpine
     hostname: rabbitmq
     ports:
       - 5672:5672
@@ -42,8 +40,8 @@ services:
       - source: rabbitmq-plugins
         target: /etc/rabbitmq/enabled_plugins
     volumes:
-      - rabbitmq-lib:/var/lib/rabbitmq/
-      - rabbitmq-log:/var/log/rabbitmq
+      - rabbitmq-lib:/var/lib/rabbitmq
+      - ./rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
 
 configs:
   rabbitmq-plugins:
@@ -51,6 +49,4 @@ configs:
 
 volumes:
   rabbitmq-lib:
-    driver: local
-  rabbitmq-log:
     driver: local

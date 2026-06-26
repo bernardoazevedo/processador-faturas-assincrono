@@ -1,4 +1,4 @@
-module github.com/bernardoazevedo/faturas
+module github.com/bernardoazevedo/processadorFaturasAssincrono
 
 go 1.24.5
 

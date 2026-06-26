@@ -2,9 +2,9 @@ FROM golang:1.24.5
 
 WORKDIR /app
 
-RUN go install github.com/air-verse/air@latest
+COPY . .
 
-# RUN go mod download && go mod verify
-# RUN go build -o /app/server
+RUN go mod download && go mod verify
+RUN go build -o /app/server
 
-ENTRYPOINT ["air"]
+ENTRYPOINT ["/app/server"]
