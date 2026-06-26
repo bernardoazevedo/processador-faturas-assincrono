@@ -2,7 +2,10 @@ package database
 
 import (
 	"context"
+	"errors"
+	"fmt"
 	"os"
+	"time"
 
 	"go.mongodb.org/mongo-driver/v2/mongo"
 	"go.mongodb.org/mongo-driver/v2/mongo/options"
@@ -17,12 +20,12 @@ func Connect() (*mongo.Client, error) {
 
 	client, err := mongo.Connect(options.Client().ApplyURI("mongodb://" + user + ":" + pass + "@mongodb:27017"))
 	if err != nil {
-		panic(err)
+		return nil, fmt.Errorf("failed to create mongo client: %w", err)
 	}
 
 	err = client.Ping(context.Background(), readpref.Primary())
 	if err != nil {
-		panic(err)
+		return nil, fmt.Errorf("failed to ping mongo: %w", err)
 	}
 
 	DB = client
@@ -30,11 +33,18 @@ func Connect() (*mongo.Client, error) {
 }
 
 func Start() error {
-	_, err := Connect()
-	if err != nil {
-		return err
+	var lastErr error
+
+	for range 5 {
+		_, err := Connect()
+		if err == nil {
+			return nil
+		}
+		lastErr = err
+		time.Sleep(2 * time.Second)
 	}
-	return nil
+
+	return errors.New("failed to connect to MongoDB after 5 attempts: " + lastErr.Error())
 }
 
 func GetDB() *mongo.Client {
