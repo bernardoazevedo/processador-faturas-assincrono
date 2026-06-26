@@ -106,4 +106,4 @@ O fluxo de processamento segue a sequencia de filas no RabbitMQ:
 POST /faturas -> validacao -> [fila save] -> [fila generateNote] -> [fila notifications] -> log em tmp/
 ```
 
-Quatro workers rodam em segundo plano (goroutines): dois `SaveWorker`, um `GenerateNoteWorker` e um `NotificationsWorker`.
+Três workers rodam em segundo plano (goroutines): um `SaveWorker`, um `GenerateNoteWorker` e um `NotificationsWorker`.
