@@ -34,16 +34,19 @@ func SaveWorker() error {
 			err := json.Unmarshal(eachMessage.Body, &fatura)
 			if err != nil {
 				log.Println("error parsing note to save: " + err.Error())
+				continue
 			}
 
 			err = save(fatura)
 			if err != nil {
 				log.Println("error saving note: " + err.Error())
+				continue
 			}
 
 			err = message.Add("generateNote", eachMessage.Body)
 			if err != nil {
 				log.Println("error adding message to generateNote queue, at item [" + fatura.Id + "]: " + err.Error())
+				continue
 			}
 		}
 	}()
@@ -75,11 +78,13 @@ func GenerateNoteWorker() error {
 			err := json.Unmarshal(eachMessage.Body, &fatura)
 			if err != nil {
 				log.Println("error parsing note: " + err.Error())
+				continue
 			}
 
 			err = generateNote(fatura)
 			if err != nil {
 				log.Println("error creating note: " + err.Error())
+				continue
 			}
 
 			messageBody, err := json.Marshal(gin.H{
@@ -91,11 +96,13 @@ func GenerateNoteWorker() error {
 			})
 			if err != nil {
 				log.Println("error parsing notification: " + err.Error())
+				continue
 			}
 
 			err = message.Add("notifications", messageBody)
 			if err != nil {
 				log.Println("error creating notification, at item [" + fatura.Id + "]: " + err.Error())
+				continue
 			}
 		}
 	}()
