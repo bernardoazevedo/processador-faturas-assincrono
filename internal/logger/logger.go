@@ -4,7 +4,7 @@ import (
 	"errors"
 	"os"
 
-	"github.com/bernardoazevedo/faturas/internal/dates"
+	"github.com/bernardoazevedo/processadorFaturasAssincrono/internal/dates"
 )
 
 func getFile(fileName string) (*os.File, error) {
@@ -18,6 +18,11 @@ func getFile(fileName string) (*os.File, error) {
 func Add(message string) (int, error) {
 	date := dates.ActualDateYMD()
 	fileName := "tmp/" + date + ".txt"
+
+	err := os.MkdirAll("tmp", 0755)
+	if err != nil {
+		return 0, errors.New("error creating tmp directory: " + err.Error())
+	}
 
 	file, err := getFile(fileName)
 	if err != nil {

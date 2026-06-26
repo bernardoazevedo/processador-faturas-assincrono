@@ -5,7 +5,7 @@ import (
 	"errors"
 	"time"
 
-	"github.com/bernardoazevedo/faturas/internal/database"
+	"github.com/bernardoazevedo/processadorFaturasAssincrono/internal/database"
 	"go.mongodb.org/mongo-driver/v2/bson"
 )
 

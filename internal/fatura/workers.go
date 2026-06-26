@@ -9,9 +9,9 @@ import (
 	"strconv"
 	"syscall"
 
-	"github.com/bernardoazevedo/faturas/internal/dates"
-	"github.com/bernardoazevedo/faturas/internal/logger"
-	"github.com/bernardoazevedo/faturas/internal/message"
+	"github.com/bernardoazevedo/processadorFaturasAssincrono/internal/dates"
+	"github.com/bernardoazevedo/processadorFaturasAssincrono/internal/logger"
+	"github.com/bernardoazevedo/processadorFaturasAssincrono/internal/message"
 	"github.com/gin-gonic/gin"
 )
 

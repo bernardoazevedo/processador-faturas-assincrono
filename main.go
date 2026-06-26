@@ -3,9 +3,9 @@ package main
 import (
 	"log"
 
-	"github.com/bernardoazevedo/faturas/internal/database"
-	"github.com/bernardoazevedo/faturas/internal/fatura"
-	"github.com/bernardoazevedo/faturas/internal/message"
+	"github.com/bernardoazevedo/processadorFaturasAssincrono/internal/database"
+	"github.com/bernardoazevedo/processadorFaturasAssincrono/internal/fatura"
+	"github.com/bernardoazevedo/processadorFaturasAssincrono/internal/message"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 )
@@ -29,7 +29,6 @@ func main() {
 		log.Fatal("Error connecting to rabbitmq")
 	}
 
-	go fatura.SaveWorker()
 	go fatura.SaveWorker()
 	go fatura.GenerateNoteWorker()
 	go fatura.NotificationsWorker()

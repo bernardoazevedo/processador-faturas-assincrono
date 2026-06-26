@@ -6,8 +6,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/bernardoazevedo/faturas/internal/logger"
-	"github.com/bernardoazevedo/faturas/internal/message"
+	"github.com/bernardoazevedo/processadorFaturasAssincrono/internal/logger"
+	"github.com/bernardoazevedo/processadorFaturasAssincrono/internal/message"
 	"github.com/paemuri/brdoc"
 )
 
